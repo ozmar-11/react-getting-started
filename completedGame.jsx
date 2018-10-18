@@ -20,6 +20,9 @@ const DoneFrame = (props) => {
 	return(
   	<div>
   	  <h2>{props.doneStatus}</h2>
+      <button className="btn btn-secondary" onClick={props.resetGame}>
+      	Play again
+      </button>
   	</div>
   );
 }
@@ -45,7 +48,7 @@ const Button = (props) => {
       button =
         <button className="btn btn-success">
           <i className="fa fa-check"></i>
-        </button>
+        </button>        
     break;
     case false:
     	button=         
@@ -68,7 +71,7 @@ const Button = (props) => {
       <button disabled={props.remainingRedraws < 1} className="btn btn-warning btn-sm" onClick={props.redraw}>
         <i className="fa fa-sync"></i>
         {props.remainingRedraws}
-      </button>
+      </button>      
     </div>
   );
 }
@@ -106,14 +109,15 @@ Numbers.list = _.range(1, 10);
 
 class Game extends React.Component {
   static randomStarsNumber = () => 1 + Math.floor(Math.random()*9);
-	state = {
-  	starsNumber: Game.randomStarsNumber(),
-  	selectedNumbers: [],
-    answerIsCorrect: null,
-    usedNumbers: [],
-    remainingRedraws: 5,
-    doneStatus: null
-  };
+  static initialState = () => ({
+                                starsNumber: Game.randomStarsNumber(),
+                                selectedNumbers: [],
+                                answerIsCorrect: null,
+                                usedNumbers: [],
+                                remainingRedraws: 5,
+                                doneStatus: null
+                              });
+	state = Game.initialState();
   
   
   selectNumber = (selectedNumber) => {
@@ -182,6 +186,10 @@ class Game extends React.Component {
     
     return possibleCombinationSum(possibleNumbers, starsNumber);
   }
+  
+  resetGame = () => {
+  	this.setState(Game.initialState());
+  }
 
 	render() {
   	return(
@@ -197,7 +205,8 @@ class Game extends React.Component {
                   remainingRedraws={this.state.remainingRedraws}/>
           <Answer selectedNumbers={this.state.selectedNumbers}
           				unselectNumber={this.unselectNumber}/>
-          { this.state.doneStatus ? <DoneFrame doneStatus={this.state.doneStatus} /> :
+          { this.state.doneStatus ? <DoneFrame doneStatus={this.state.doneStatus} 
+          													 resetGame={this.resetGame}/> :
           <Numbers selectedNumbers={this.state.selectedNumbers} 
           				 selectNumber={this.selectNumber}
                    availableNumbers={this.state.availableNumbers}
